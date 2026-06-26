@@ -52,8 +52,9 @@
         new QRCode(document.getElementById("qr"), { text: participantUrl, width: 260, height: 260 });
       }
 
-      sb.from("rooms_public").select("title").eq("id", room).single().then(({ data }) => {
-        $theme.textContent = (data && data.title) ? data.title : "SpeakUp";
+      sb.rpc("get_room", { p_room_id: room }).then(({ data }) => {
+        const r = data && data[0];
+        $theme.textContent = (r && r.title) ? r.title : "SpeakUp";
         document.title = `SpeakUp｜${$theme.textContent}（参加用QR）`;
       });
     })();

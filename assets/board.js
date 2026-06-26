@@ -109,7 +109,8 @@
 
   // ---- 初期化 ----
   async function init() {
-    const { data: rinfo } = await sb.from("rooms_public").select("title,is_open").eq("id", room).single();
+    const { data: rrows } = await sb.rpc("get_room", { p_room_id: room });
+    const rinfo = rrows && rrows[0];
     if (rinfo) {
       $title.textContent = rinfo.title || "SpeakUp";
       if (!rinfo.is_open) $closed.classList.remove("hidden");

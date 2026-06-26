@@ -54,10 +54,16 @@ drop policy if exists posts_insert on public.posts;
 create policy posts_insert on public.posts for insert to anon
   with check (public.room_is_open(room_id));
 
--- 公開ビュー(トークンを含まない)。view 所有者権限で動くので anon でも読める。
-create or replace view public.rooms_public as
-  select id, title, is_open, created_at from public.rooms;
-grant select on public.rooms_public to anon;
+-- 公開情報の取得: 部屋コードを渡すと title/is_open だけ返す。
+-- (旧 rooms_public ビューは SECURITY DEFINER 警告が出るため関数に置換。
+--  関数なら部屋の列挙ができず、トークンも露出しない＝より安全)
+drop view if exists public.rooms_public;
+create or replace function public.get_room(p_room_id text)
+returns table(title text, is_open boolean)
+language sql security definer set search_path = public as $$
+  select title, is_open from public.rooms where id = p_room_id;
+$$;
+grant execute on function public.get_room(text) to anon;
 
 -- ============================================================
 -- 関数(RPC)

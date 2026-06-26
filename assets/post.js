@@ -61,7 +61,8 @@
 
   // 初期化: テーマと開閉状態を1回だけ取得（以降はリアルタイム購読しない）
   async function init() {
-    const { data: rinfo } = await sb.from("rooms_public").select("title,is_open").eq("id", room).single();
+    const { data: rows } = await sb.rpc("get_room", { p_room_id: room });
+    const rinfo = rows && rows[0];
     if (rinfo) {
       $prompt.textContent = rinfo.title || "（テーマ未設定）";
       if (!rinfo.is_open) setClosed();
