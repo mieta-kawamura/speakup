@@ -8,9 +8,18 @@
   const $result = document.getElementById("result");
   const $plink = document.getElementById("plink");
   const $alink = document.getElementById("alink");
+  let currentRoom = null;
 
   function baseUrl() {
     return location.href.replace(/index\.html.*$/, "").replace(/\/?$/, "/");
+  }
+
+  // qrcodejs が描いた QR を PNG データURLで取り出す
+  function qrDataUrl(box) {
+    const canvas = box.querySelector("canvas");
+    if (canvas) return canvas.toDataURL("image/png");
+    const img = box.querySelector("img");
+    return img ? img.src : null;
   }
 
   function showError(msg) {
@@ -28,6 +37,7 @@
       const row = Array.isArray(data) ? data[0] : data;
       if (!row) throw new Error("部屋の作成に失敗しました");
 
+      currentRoom = row.room_id;
       const pUrl = baseUrl() + "post.html?room=" + encodeURIComponent(row.room_id);
       const aUrl = baseUrl() + "board.html?room=" + encodeURIComponent(row.room_id) +
         "&key=" + encodeURIComponent(row.admin_token);
@@ -67,6 +77,22 @@
         document.execCommand("copy");
       }
     });
+  });
+
+  // QR画像を保存（PNG）
+  document.getElementById("qrsave").addEventListener("click", () => {
+    const url = qrDataUrl(document.getElementById("qrbox"));
+    if (!url) { alert("QRがまだ生成されていません"); return; }
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `speakup_qr_${currentRoom || "room"}.png`;
+    a.click();
+  });
+
+  // 印刷用QRページを新規タブで開く
+  document.getElementById("qrprint").addEventListener("click", () => {
+    if (!currentRoom) return;
+    window.open(baseUrl() + "qr.html?room=" + encodeURIComponent(currentRoom), "_blank");
   });
 
   document.getElementById("again").addEventListener("click", () => location.reload());

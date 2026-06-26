@@ -7,9 +7,17 @@
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
 <body>
+  <div class="bg-decor" aria-hidden="true">
+    <span class="b" style="width:96px;height:58px;background:#38bdf8;top:8%;left:-2%;"></span>
+    <span class="b" style="width:72px;height:46px;background:#fb7185;top:16%;right:6%;"></span>
+    <span class="b" style="width:60px;height:40px;background:#fbbf24;bottom:18%;left:8%;"></span>
+    <span class="b" style="width:84px;height:52px;background:#38bdf8;bottom:8%;right:-2%;"></span>
+  </div>
   <main class="create-wrap">
-    <h1>SpeakUp</h1>
-    <p class="lead">テーマを決めて部屋を作ると、参加者用と管理者用のリンクが発行されます。アカウント登録は不要です。</p>
+    <div class="su-hero">
+      <div class="su-logo"><b>Speak<span class="up">Up</span></b></div>
+      <p class="lead">テーマを決めて部屋を作ると、参加者用と管理者用のリンクが発行されます。アカウント登録は不要です。</p>
+    </div>
 
     <div id="form">
       <label class="field-label" for="title">テーマ（自由入力：お題でも「〇〇について考える」「〇〇部屋」でもOK）</label>
@@ -26,6 +34,10 @@
           <button class="btn" data-copy="plink">コピー</button>
         </div>
         <div id="qrbox"></div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn" id="qrsave">QR画像を保存</button>
+          <button class="btn" id="qrprint">印刷用ページ</button>
+        </div>
       </div>
       <div class="link-row">
         <div class="cap admin">管理者リンク（あなた専用・共有しない）</div>

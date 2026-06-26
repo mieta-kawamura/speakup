@@ -93,6 +93,19 @@
   document.getElementById("modalcopy").addEventListener("click", async () => {
     try { await navigator.clipboard.writeText(participantUrl); } catch { document.getElementById("modalurl").select(); document.execCommand("copy"); }
   });
+  document.getElementById("modalqrsave").addEventListener("click", () => {
+    const box = document.getElementById("modalqr");
+    const canvas = box.querySelector("canvas");
+    const url = canvas ? canvas.toDataURL("image/png") : (box.querySelector("img") || {}).src;
+    if (!url) { alert("QRがまだ生成されていません"); return; }
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `speakup_qr_${room}.png`;
+    a.click();
+  });
+  document.getElementById("modalqrprint").addEventListener("click", () => {
+    window.open(location.href.replace(/board\.html.*$/, "") + "qr.html?room=" + encodeURIComponent(room), "_blank");
+  });
 
   // ---- 初期化 ----
   async function init() {

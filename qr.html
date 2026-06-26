@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpeakUp｜参加用QR（印刷用）</title>
+  <style>
+    html, body { margin: 0; background: #fff; color: #0f172a;
+      font-family: -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif; }
+    .sheet { max-width: 520px; margin: 0 auto; padding: 48px 24px; text-align: center; }
+    .logo { display: inline-block; background: #0b1220; color: #fff; border: 2px solid #38bdf8;
+      border-radius: 16px; padding: 10px 22px; font-size: 1.9rem; font-weight: 700; letter-spacing: -0.5px; }
+    .logo span { color: #38bdf8; }
+    .lead { color: #475569; margin: 18px 0 6px; font-size: 0.95rem; }
+    .theme { font-size: 1.7rem; font-weight: 700; line-height: 1.4; margin: 6px 0 28px; }
+    #qr { display: inline-block; padding: 10px; border: 1px solid #e2e8f0; border-radius: 12px; }
+    .url { margin-top: 18px; font-size: 0.9rem; color: #334155; word-break: break-all; }
+    .hint { margin-top: 24px; font-size: 1.05rem; color: #0f172a; }
+    .hint b { color: #e11d48; }
+    .printbtn { margin-top: 28px; padding: 12px 28px; font-size: 1rem; font-weight: 700;
+      background: #fb7185; color: #4a1020; border: none; border-radius: 10px; cursor: pointer; }
+    @media print { .printbtn { display: none; } .sheet { padding-top: 24px; } }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="logo">Speak<span>Up</span></div>
+    <div class="lead">下のQRコードから、スマホで参加できます</div>
+    <div class="theme" id="theme">　</div>
+    <div id="qr"></div>
+    <div class="url" id="url"></div>
+    <div class="hint">スマホのカメラ／QRリーダーで読み取って <b>あなたの声を投稿</b> してください</div>
+    <button class="printbtn" onclick="window.print()">印刷する</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="assets/config.js"></script>
+  <script src="assets/common.js"></script>
+  <script>
+    (function () {
+      const { sb, q } = IB;
+      const room = q("room");
+      const $theme = document.getElementById("theme");
+      const $url = document.getElementById("url");
+      if (!room) { $theme.textContent = "部屋が指定されていません"; return; }
+
+      const participantUrl =
+        location.href.replace(/qr\.html.*$/, "") + "post.html?room=" + encodeURIComponent(room);
+      $url.textContent = participantUrl;
+      if (typeof QRCode !== "undefined") {
+        new QRCode(document.getElementById("qr"), { text: participantUrl, width: 260, height: 260 });
+      }
+
+      sb.from("rooms_public").select("title").eq("id", room).single().then(({ data }) => {
+        $theme.textContent = (data && data.title) ? data.title : "SpeakUp";
+        document.title = `SpeakUp｜${$theme.textContent}（参加用QR）`;
+      });
+    })();
+  </script>
+</body>
+</html>
